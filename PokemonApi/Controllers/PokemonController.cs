@@ -43,12 +43,59 @@ namespace PokemonAPI.Controllers
             }
         }
 
-        [HttpGet("{name}")]
+        [HttpGet("name/{name}")]
         public async Task<IActionResult> GetPokemonByName(string name)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"{_pokeApiBaseUrl}pokemon/{name}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return Content(content, "application/json");
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, "Error fetching data from PokeAPI.");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpGet("types")]
+        public async Task<IActionResult> GetAllTypes()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_pokeApiBaseUrl}type");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return Content(content, "application/json");
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, "Error fetching types from PokeAPI.");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+
+        [HttpGet("type/{type}")]
+        public async Task<IActionResult> GetPokemonByType(string type)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_pokeApiBaseUrl}type/{type}");
 
                 if (response.IsSuccessStatusCode)
                 {
